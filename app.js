@@ -24,7 +24,7 @@ app.get('/', async (req, res) => {
 });
 });
 
-// Member API routes
+// Product API routes
 app.use('/api/products', require('./routes/api/products'));
 
 const PORT = config.port || 3000;
