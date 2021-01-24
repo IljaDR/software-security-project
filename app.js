@@ -1,13 +1,32 @@
-const http = require('http');
+const express = require('express');
+const path = require('path');
+const exphbs = require('express-handlebars');
+const mysql = require('mysql')
+const config = require('./config.json');
+const productDAO = require('./lib/models/productDAO.js');
 
-const port = 3000;
+const app = express();
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
+// Handlebars middleware
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
+// Body parser middleware
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+
+// Homepage route
+app.get('/', async (req, res) => {
+   let products = await productDAO.getAllProducts();
+   res.render('index', {
+   title: 'Webshop',
+   products
+});
 });
 
-server.listen(port, () => {
-  console.log(`Server running at port ${port}/`);
-});
+// Member API routes
+app.use('/api/products', require('./routes/api/products'));
+
+const PORT = config.port || 3000;
+
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
