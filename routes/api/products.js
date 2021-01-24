@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const productDAO = require('../../lib/models/productDAO.js');
-const sanitizeHtml = require('sanitize-html');
 
 router.get('/', async (req, res) => {
    let products = await productDAO.getAllProducts();
