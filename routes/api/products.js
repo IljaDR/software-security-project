@@ -33,7 +33,7 @@ router.delete('/:id', async (req, res) => {
    res.status(200).send(products);
 })
 
-router.update('/update/:id', async (req, res) => {
+router.put('/update/:id', async (req, res) => {
    if(!req.body.name || !req.body.price || !req.body.stock || !req.body.description || !req.body.picture){
       console.log(req.body.name)
       return res.status(400).json({ msg: "Please enter valid values."});

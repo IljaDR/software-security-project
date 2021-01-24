@@ -24,6 +24,12 @@ app.get('/', async (req, res) => {
 });
 });
 
+// Register route
+app.get('/register', async (req, res) => {
+   let products = await productDAO.getAllProducts();
+   res.render('register');
+});
+
 // Product API routes
 app.use('/api/products', require('./routes/api/products'));
 
