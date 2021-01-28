@@ -1,11 +1,20 @@
 const express = require('express');
 const path = require('path');
 const exphbs = require('express-handlebars');
-const mysql = require('mysql')
+const mysql = require('mysql');
 const config = require('./config.json');
-const productDAO = require('./lib/models/productDAO.js');
-
+const productDAO = require('./lib/models/productDAO');
+const passport = require('passport');
+const initializePassport = require('./passport-config');
+const authenticationDAO = require('./lib/models/authenticationDAO.js');
+const flash = require('express-flash');
+const session = require('express-session');
+const methodOverride = require('method-override');
 const app = express();
+
+const users = []
+
+initializePassport(passport, authenticationDAO.getUserByEmail, authenticationDAO.getUserByID);
 
 // Handlebars middleware
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -14,19 +23,37 @@ app.set('view engine', 'handlebars');
 // Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(flash());
+app.use(session({
+   secret: config.sessionSecret,
+   resave: false,
+   saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(methodOverride('_method'));
 
 // Homepage route
-app.get('/', async (req, res) => {
+app.get('/', checkAuthenticated, async (req, res) => {
    let products = await productDAO.getAllProducts();
+   let user = await req.user;
+
+   //Without this code, user would be of type RowDataPacket, which doesn't enable the retrieval of data members
+   user = JSON.parse(JSON.stringify(user));
    res.render('index', {
-   title: 'Webshop',
+   title: "Hello " + user.name,
    products
 });
 });
 
 // Register route
-app.get('/register', async (req, res) => {
+app.get('/register', checkNotAuthenticated, async (req, res) => {
    res.render('register');
+});
+
+// Register route
+app.get('/login', checkNotAuthenticated, async (req, res) => {
+   res.render('login');
 });
 
 // Privacy route
@@ -35,7 +62,26 @@ app.get('/privacy', async (req, res) => {
 });
 
 // Product API routes
-app.use('/api/products', require('./routes/api/products'));
+app.use('/api/products', checkAuthenticated, require('./routes/api/products'));
+
+// Authentication routes
+app.use('/authentication', require('./routes/api/authentication'));
+
+function checkAuthenticated(req, res, next){
+   if(req.isAuthenticated()){
+      return next();
+   }
+
+   res.redirect('/login');
+}
+
+function checkNotAuthenticated(req, res, next){
+   if(req.isAuthenticated()){
+      return res.redirect('/');
+   }
+
+   next();
+}
 
 const PORT = config.port || 3000;
 
