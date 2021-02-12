@@ -4,6 +4,7 @@ const exphbs = require('express-handlebars');
 const mysql = require('mysql');
 const config = require('./config.json');
 const productDAO = require('./lib/models/productDAO');
+const antiqueDAO = require('./lib/models/antiqueDAO');
 const passport = require('passport');
 const initializePassport = require('./passport-config');
 const authenticationDAO = require('./lib/models/authenticationDAO.js');
@@ -35,14 +36,14 @@ app.use(methodOverride('_method'));
 
 // Homepage route
 app.get('/', checkAuthenticated, async (req, res) => {
-   let products = await productDAO.getAllProducts();
+   let antiques = await antiqueDAO.getAllProducts();
    let user = await req.user;
 
    //Without this code, user would be of type RowDataPacket, which doesn't enable the retrieval of data members
    user = JSON.parse(JSON.stringify(user));
    res.render('index', {
    title: "Hello " + user.name,
-   products
+   antiques
 });
 });
 
