@@ -14,12 +14,12 @@
           <div class="col-lg-4 col-md-6 mb-4">
 
             <div class="card h-100">
-              <a href="#"><img class="card-img-top" src="../pictures/{{this.primary_picture}}.jpg" style="height: 200px"></a>
+              <a href="/detail?id={{this.id}}"><img class="card-img-top" src="../pictures/{{this.primary_picture_location}}" style="height: 300px; overflow: hidden; object-fit: cover"></a>
               <div class="card-body">
                 <h4 class="card-title">
-                  <a href="#">{{this.article_number}}</a>
+                  <a href="/detail?id={{this.id}}">{{this.article_number}}</a>
                 </h4>
-                <h5>{{this.price}}</h5>
+                <h5>€{{this.price}}</h5>
                 <p class="card-text">{{this.original_description}}</p>
               </div>
             </div>

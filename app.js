@@ -42,9 +42,21 @@ app.get('/', checkAuthenticated, async (req, res) => {
    //Without this code, user would be of type RowDataPacket, which doesn't enable the retrieval of data members
    user = JSON.parse(JSON.stringify(user));
    res.render('index', {
-   title: "Hello " + user.name,
+   //title: "Hello " + user.name,
+   title: "Placeholder",
    antiques
 });
+});
+
+// Detail route
+app.get('/detail', checkAuthenticated, async (req, res) => {
+   let id = await req.query.id;
+   let antique = await antiqueDAO.getProductByID(id);
+   antique = JSON.parse(JSON.stringify(antique))
+
+   res.render('detail', {
+      antique
+   });
 });
 
 // Register route
@@ -67,6 +79,9 @@ app.use('/api/products', checkAuthenticated, require('./routes/api/products'));
 
 // Authentication routes
 app.use('/authentication', require('./routes/api/authentication'));
+
+// Picture route
+app.use(express.static('public'));
 
 function checkAuthenticated(req, res, next){
    if(req.isAuthenticated()){
