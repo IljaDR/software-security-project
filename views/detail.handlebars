@@ -6,7 +6,11 @@
 
         <h1 class="mt-4">{{antique.article_number}}</h1>
 
-        <img class="img-fluid rounded" src="../pictures/{{antique.primary_picture_location}}" alt="" style="height: 600px">
+        <div class="scrollmenu">
+           {{#each pictures}}
+               <img class="img-fluid rounded" src="../pictures/{{this.location}}" alt="" style="height: 600px">
+           {{/each}}
+       </div>
 
         <hr>
 

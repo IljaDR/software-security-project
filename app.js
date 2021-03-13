@@ -5,6 +5,7 @@ const mysql = require('mysql');
 const config = require('./config.json');
 const productDAO = require('./lib/models/productDAO');
 const antiqueDAO = require('./lib/models/antiqueDAO');
+const pictureDAO = require('./lib/models/pictureDAO');
 const passport = require('passport');
 const initializePassport = require('./passport-config');
 const authenticationDAO = require('./lib/models/authenticationDAO.js');
@@ -42,8 +43,6 @@ app.get('/', checkAuthenticated, async (req, res) => {
    //Without this code, user would be of type RowDataPacket, which doesn't enable the retrieval of data members
    user = JSON.parse(JSON.stringify(user));
    res.render('index', {
-   //title: "Hello " + user.name,
-   title: "Placeholder",
    antiques
 });
 });
@@ -54,8 +53,12 @@ app.get('/detail', checkAuthenticated, async (req, res) => {
    let antique = await antiqueDAO.getProductByID(id);
    antique = JSON.parse(JSON.stringify(antique))
 
+   let pictures = await pictureDAO.getPictureByProductID(id);
+   pictures = JSON.parse(JSON.stringify(pictures))
+
    res.render('detail', {
-      antique
+      antique,
+      pictures
    });
 });
 

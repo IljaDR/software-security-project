@@ -106,5 +106,5 @@ dist
 # Config file
 config.json
 
-# Static folder
-public/
+# pictures folder
+pictures/
